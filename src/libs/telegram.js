@@ -51,23 +51,38 @@ module.exports = {
       const chatId = message.chat.id;
       logger.info(`[${chatId}] Accept '${masterClassSingUpPattern}' message`);
 
-      await bot.sendMessage(
-        chatId,
-        messages.classesSingUpText,
-        formOf(
-          [buttons.classesPayCard, buttons.classesPayCash],
-          [buttons.party]
-        )
-      );
+      const reply = await bot.sendMessage(chatId, messages.classesSingUpText, {
+        reply_markup: {
+          keyboard: [[buttons.party]],
+          resize_keyboard: true,
+          force_reply: true,
+        },
+      });
+
+      bot.onReplyToMessage(reply.chat.id, reply.message_id, (replyCallBack) => {
+        bot.sendMessage(
+          chatId,
+          messages.classesCashDoneText,
+          formOf(
+            [buttons.classesPayCard, buttons.classesPayCash],
+            [buttons.party]
+          )
+        );
+        logger.info(`CLIENT WANT TO CLASSES ${replyCallBack.text}`);
+        fs.appendFileSync(
+          "src/data/classes-peoples.txt",
+          `${replyCallBack.text}\n`
+        );
+      });
     });
 
-    // Master-classes pay card handler
+    // Master-classes pay cash handler
     const masterClassPayCashPattern = `${buttons.classesPayCash.text}`;
     bot.onText(new RegExp(masterClassPayCashPattern), async (message, _) => {
       const chatId = message.chat.id;
       logger.info(`[${chatId}] Accept '${masterClassPayCashPattern}' message`);
 
-      await bot.sendMessage(
+      const reply = await bot.sendMessage(
         chatId,
         messages.classesCashText,
         formOf([buttons.classesPayCard], [buttons.party])
@@ -126,6 +141,92 @@ module.exports = {
           [buttons.classesPayCash],
           [buttons.party]
         )
+      );
+    });
+
+    // Party handler
+    const partyHandlerPattern = `${buttons.party.text}`;
+    bot.onText(new RegExp(partyHandlerPattern), async (msg, _) => {
+      const chatId = msg.chat.id;
+      logger.info(`[${chatId}] Accept ${partyHandlerPattern} message`);
+
+      await bot.sendPhoto(chatId, partyPictureBuffer);
+
+      await bot.sendMessage(
+        chatId,
+        messages.partyText,
+        formOf([buttons.partySignUp], [buttons.classes])
+      );
+    });
+
+    // Party sign up handler
+    const partySingUpHandlerPattern = `${buttons.partySignUp.text}`;
+    bot.onText(new RegExp(partySingUpHandlerPattern), async (msg, _) => {
+      const chatId = msg.chat.id;
+      logger.info(`[${chatId}] Accept ${partySingUpHandlerPattern} message`);
+
+      const reply = await bot.sendMessage(chatId, messages.partySignUpText, {
+        reply_markup: {
+          keyboard: [[buttons.partySignUp], [buttons.classes]],
+          resize_keyboard: true,
+          force_reply: true,
+        },
+      });
+
+      bot.onReplyToMessage(reply.chat.id, reply.message_id, (replyCallBack) => {
+        bot.sendMessage(
+          chatId,
+          messages.partySignUpResultText,
+          formOf(
+            [buttons.partyPayCash],
+            [buttons.partyCardTr],
+            [buttons.partyCardRu]
+          )
+        );
+        logger.info(`CLIENT WANT TO PARTY ${replyCallBack.text}`);
+        fs.appendFileSync(
+          "src/data/party-peoples.txt",
+          `${replyCallBack.text}\n`
+        );
+      });
+    });
+
+    // Party pay cash handler
+    const partyPayCashHandlerPattern = `${buttons.partyPayCash.text}`;
+    bot.onText(new RegExp(partyPayCashHandlerPattern), async (msg, _) => {
+      const chatId = msg.chat.id;
+      logger.info(`[${chatId}] Accept ${partyPayCashHandlerPattern} message`);
+
+      await bot.sendMessage(
+        chatId,
+        messages.partyCashText,
+        formOf([buttons.partyCardRu, buttons.partyCardTr], [buttons.classes])
+      );
+    });
+
+    // Party pay card TR handler
+    const partyPayCardTrHandlerPattern = `${buttons.partyCardTr.text}`;
+    bot.onText(new RegExp(partyPayCardTrHandlerPattern), async (msg, _) => {
+      const chatId = msg.chat.id;
+      logger.info(`[${chatId}] Accept ${partyPayCardTrHandlerPattern} message`);
+
+      await bot.sendMessage(
+        chatId,
+        messages.partyCardTrText,
+        formOf([buttons.partyCardRu, buttons.partyPayCash], [buttons.classes])
+      );
+    });
+
+    // Party pay card RU handler
+    const partyPayCardRuHandlerPattern = `${buttons.partyCardRu.text}`;
+    bot.onText(new RegExp(partyPayCardRuHandlerPattern), async (msg, _) => {
+      const chatId = msg.chat.id;
+      logger.info(`[${chatId}] Accept ${partyPayCardRuHandlerPattern} message`);
+
+      await bot.sendMessage(
+        chatId,
+        messages.partyCardRuText,
+        formOf([buttons.partyCardTr, buttons.partyPayCash], [buttons.classes])
       );
     });
 
