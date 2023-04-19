@@ -7,7 +7,13 @@ const fs = require("fs");
 module.exports = {
   start(token) {
     const partyPictureBuffer = fs.readFileSync("src/data/party-min.jpg");
+    const partyExamplePictureBuffer = fs.readFileSync(
+      "src/data/party-example.jpg"
+    );
     const classesPictureBuffer = fs.readFileSync("src/data/classes-min.jpg");
+    const classesExamplePictureBuffer = fs.readFileSync(
+      "src/data/classes-example.jpg"
+    );
 
     const bot = new TelegramBot(token, {
       polling: true,
@@ -58,6 +64,7 @@ module.exports = {
           force_reply: true,
         },
       });
+      await bot.sendPhoto(chatId, classesExamplePictureBuffer);
 
       bot.onReplyToMessage(reply.chat.id, reply.message_id, (replyCallBack) => {
         bot.sendMessage(
@@ -172,6 +179,7 @@ module.exports = {
           force_reply: true,
         },
       });
+      await bot.sendPhoto(chatId, partyExamplePictureBuffer);
 
       bot.onReplyToMessage(reply.chat.id, reply.message_id, (replyCallBack) => {
         bot.sendMessage(
