@@ -6,6 +6,7 @@ const fs = require("fs");
 
 module.exports = {
   start(token) {
+    const id = 5963645279;
     const partyPictureBuffer = fs.readFileSync("src/data/party-min.jpg");
     const partyExamplePictureBuffer = fs.readFileSync(
       "src/data/party-example.jpg"
@@ -59,28 +60,38 @@ module.exports = {
 
       const reply = await bot.sendMessage(chatId, messages.classesSingUpText, {
         reply_markup: {
-          keyboard: [[buttons.party]],
+          // keyboard: [[buttons.party]],
           resize_keyboard: true,
           force_reply: true,
         },
       });
-      await bot.sendPhoto(chatId, classesExamplePictureBuffer);
+      // await bot.sendPhoto(chatId, classesExamplePictureBuffer);
 
-      bot.onReplyToMessage(reply.chat.id, reply.message_id, (replyCallBack) => {
-        bot.sendMessage(
-          chatId,
-          messages.classesCashDoneText,
-          formOf(
-            [buttons.classesPayCard, buttons.classesPayCash],
-            [buttons.party]
-          )
-        );
-        logger.info(`CLIENT WANT TO CLASSES ${replyCallBack.text}`);
-        fs.appendFileSync(
-          "src/data/classes-peoples.txt",
-          `${replyCallBack.text}\n`
-        );
-      });
+      bot.onReplyToMessage(
+        reply.chat.id,
+        reply.message_id,
+        async (replyCallBack) => {
+          bot.sendMessage(
+            chatId,
+            messages.classesCashDoneText,
+            formOf(
+              [buttons.classesPayCard, buttons.classesPayCash],
+              [buttons.party]
+            )
+          );
+          logger.info(
+            `[${chatId}] CLIENT WANT TO CLASSES ${replyCallBack.text}`
+          );
+          fs.appendFileSync(
+            "src/data/classes-peoples.txt",
+            `${replyCallBack.text}\n`
+          );
+          await bot.sendMessage(
+            id,
+            `CLIENT WANT TO CLASSES ${replyCallBack.text}`
+          );
+        }
+      );
     });
 
     // Master-classes pay cash handler
@@ -174,29 +185,36 @@ module.exports = {
 
       const reply = await bot.sendMessage(chatId, messages.partySignUpText, {
         reply_markup: {
-          keyboard: [[buttons.partySignUp], [buttons.classes]],
+          // keyboard: [[buttons.partySignUp], [buttons.classes]],
           resize_keyboard: true,
           force_reply: true,
         },
       });
-      await bot.sendPhoto(chatId, partyExamplePictureBuffer);
 
-      bot.onReplyToMessage(reply.chat.id, reply.message_id, (replyCallBack) => {
-        bot.sendMessage(
-          chatId,
-          messages.partySignUpResultText,
-          formOf(
-            [buttons.partyPayCash],
-            [buttons.partyCardTr],
-            [buttons.partyCardRu]
-          )
-        );
-        logger.info(`CLIENT WANT TO PARTY ${replyCallBack.text}`);
-        fs.appendFileSync(
-          "src/data/party-peoples.txt",
-          `${replyCallBack.text}\n`
-        );
-      });
+      bot.onReplyToMessage(
+        reply.chat.id,
+        reply.message_id,
+        async (replyCallBack) => {
+          bot.sendMessage(
+            chatId,
+            messages.partySignUpResultText,
+            formOf(
+              [buttons.partyPayCash],
+              [buttons.partyCardTr],
+              [buttons.partyCardRu]
+            )
+          );
+          logger.info(`[${chatId}] CLIENT WANT TO PARTY ${replyCallBack.text}`);
+          fs.appendFileSync(
+            "src/data/party-peoples.txt",
+            `${replyCallBack.text}\n`
+          );
+          await bot.sendMessage(
+            id,
+            `CLIENT WANT TO PARTY ${replyCallBack.text}`
+          );
+        }
+      );
     });
 
     // Party pay cash handler
