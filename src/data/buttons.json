@@ -5,6 +5,18 @@
   "classesSingUp": {
     "text": "Записаться на мастер-классы"
   },
+  "classesPayCash": {
+    "text": "Оплатить наличными на месте"
+  },
+  "classesPayCard": {
+    "text": "Купить билет сейчас и забронировать место"
+  },
+  "classesPayCardRu": {
+    "text": "На российскую карту"
+  },
+  "classesPayCardTr": {
+    "text": "На турецкую карту"
+  },
   "party": {
     "text": "Вечеринка!"
   }

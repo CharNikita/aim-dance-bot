@@ -45,6 +45,90 @@ module.exports = {
       );
     });
 
+    // Master-classes sing up handler
+    const masterClassSingUpPattern = `${buttons.classesSingUp.text}`;
+    bot.onText(new RegExp(masterClassSingUpPattern), async (message, _) => {
+      const chatId = message.chat.id;
+      logger.info(`[${chatId}] Accept '${masterClassSingUpPattern}' message`);
+
+      await bot.sendMessage(
+        chatId,
+        messages.classesSingUpText,
+        formOf(
+          [buttons.classesPayCard, buttons.classesPayCash],
+          [buttons.party]
+        )
+      );
+    });
+
+    // Master-classes pay card handler
+    const masterClassPayCashPattern = `${buttons.classesPayCash.text}`;
+    bot.onText(new RegExp(masterClassPayCashPattern), async (message, _) => {
+      const chatId = message.chat.id;
+      logger.info(`[${chatId}] Accept '${masterClassPayCashPattern}' message`);
+
+      await bot.sendMessage(
+        chatId,
+        messages.classesCashText,
+        formOf([buttons.classesPayCard], [buttons.party])
+      );
+    });
+
+    // Master-classes pay card handler
+    const masterClassPayCardPattern = `${buttons.classesPayCard.text}`;
+    bot.onText(new RegExp(masterClassPayCardPattern), async (message, _) => {
+      const chatId = message.chat.id;
+      logger.info(`[${chatId}] Accept '${masterClassPayCardPattern}' message`);
+
+      await bot.sendMessage(
+        chatId,
+        messages.classesCardText,
+        formOf(
+          [buttons.classesPayCardTr, buttons.classesPayCardRu],
+          [buttons.classesPayCash],
+          [buttons.party]
+        )
+      );
+    });
+
+    // Master-classes pay card TR handler
+    const masterClassPayCardTRPattern = `${buttons.classesPayCardTr.text}`;
+    bot.onText(new RegExp(masterClassPayCardTRPattern), async (message, _) => {
+      const chatId = message.chat.id;
+      logger.info(
+        `[${chatId}] Accept '${masterClassPayCardTRPattern}' message`
+      );
+
+      await bot.sendMessage(
+        chatId,
+        messages.classesCardTrText,
+        formOf(
+          [buttons.classesPayCardTr, buttons.classesPayCardRu],
+          [buttons.classesPayCash],
+          [buttons.party]
+        )
+      );
+    });
+
+    // Master-classes pay card RU handler
+    const masterClassPayCardRUPattern = `${buttons.classesPayCardRu.text}`;
+    bot.onText(new RegExp(masterClassPayCardRUPattern), async (message, _) => {
+      const chatId = message.chat.id;
+      logger.info(
+        `[${chatId}] Accept '${masterClassPayCardRUPattern}' message`
+      );
+
+      await bot.sendMessage(
+        chatId,
+        messages.classesCardRuText,
+        formOf(
+          [buttons.classesPayCardTr, buttons.classesPayCardRu],
+          [buttons.classesPayCash],
+          [buttons.party]
+        )
+      );
+    });
+
     const formOf = (...buttons) => {
       if (buttons[0] instanceof Array) {
         return {
