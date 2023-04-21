@@ -8,13 +8,7 @@ module.exports = {
   start(token) {
     const id = 5963645279;
     const partyPictureBuffer = fs.readFileSync("src/data/party-min.jpg");
-    const partyExamplePictureBuffer = fs.readFileSync(
-      "src/data/party-example.jpg"
-    );
     const classesPictureBuffer = fs.readFileSync("src/data/classes-min.jpg");
-    const classesExamplePictureBuffer = fs.readFileSync(
-      "src/data/classes-example.jpg"
-    );
 
     const bot = new TelegramBot(token, {
       polling: true,
@@ -30,7 +24,7 @@ module.exports = {
       const chatId = msg.chat.id;
       logger.info(`[${chatId}] Accept ${startHandlerPattern} message`);
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.startText,
         formOf(buttons.classes, buttons.party)
@@ -45,7 +39,7 @@ module.exports = {
 
       await bot.sendPhoto(chatId, classesPictureBuffer);
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.classesText,
         formOf([buttons.classesSingUp], [buttons.party])
@@ -58,20 +52,18 @@ module.exports = {
       const chatId = message.chat.id;
       logger.info(`[${chatId}] Accept '${masterClassSingUpPattern}' message`);
 
-      const reply = await bot.sendMessage(chatId, messages.classesSingUpText, {
+      const reply = await sendMessage(chatId, messages.classesSingUpText, {
         reply_markup: {
-          // keyboard: [[buttons.party]],
           resize_keyboard: true,
           force_reply: true,
         },
       });
-      // await bot.sendPhoto(chatId, classesExamplePictureBuffer);
 
       bot.onReplyToMessage(
         reply.chat.id,
         reply.message_id,
         async (replyCallBack) => {
-          bot.sendMessage(
+          sendMessage(
             chatId,
             messages.classesCashDoneText,
             formOf(
@@ -86,10 +78,7 @@ module.exports = {
             "src/data/classes-peoples.txt",
             `${replyCallBack.text}\n`
           );
-          await bot.sendMessage(
-            id,
-            `CLIENT WANT TO CLASSES ${replyCallBack.text}`
-          );
+          await sendMessage(id, `CLIENT WANT TO CLASSES ${replyCallBack.text}`);
         }
       );
     });
@@ -100,7 +89,7 @@ module.exports = {
       const chatId = message.chat.id;
       logger.info(`[${chatId}] Accept '${masterClassPayCashPattern}' message`);
 
-      const reply = await bot.sendMessage(
+      const reply = await sendMessage(
         chatId,
         messages.classesCashText,
         formOf([buttons.classesPayCard], [buttons.party])
@@ -113,7 +102,7 @@ module.exports = {
       const chatId = message.chat.id;
       logger.info(`[${chatId}] Accept '${masterClassPayCardPattern}' message`);
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.classesCardText,
         formOf(
@@ -132,7 +121,7 @@ module.exports = {
         `[${chatId}] Accept '${masterClassPayCardTRPattern}' message`
       );
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.classesCardTrText,
         formOf(
@@ -151,7 +140,7 @@ module.exports = {
         `[${chatId}] Accept '${masterClassPayCardRUPattern}' message`
       );
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.classesCardRuText,
         formOf(
@@ -170,7 +159,7 @@ module.exports = {
 
       await bot.sendPhoto(chatId, partyPictureBuffer);
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.partyText,
         formOf([buttons.partySignUp], [buttons.classes])
@@ -183,7 +172,7 @@ module.exports = {
       const chatId = msg.chat.id;
       logger.info(`[${chatId}] Accept ${partySingUpHandlerPattern} message`);
 
-      const reply = await bot.sendMessage(chatId, messages.partySignUpText, {
+      const reply = await sendMessage(chatId, messages.partySignUpText, {
         reply_markup: {
           // keyboard: [[buttons.partySignUp], [buttons.classes]],
           resize_keyboard: true,
@@ -195,7 +184,7 @@ module.exports = {
         reply.chat.id,
         reply.message_id,
         async (replyCallBack) => {
-          bot.sendMessage(
+          sendMessage(
             chatId,
             messages.partySignUpResultText,
             formOf(
@@ -209,10 +198,7 @@ module.exports = {
             "src/data/party-peoples.txt",
             `${replyCallBack.text}\n`
           );
-          await bot.sendMessage(
-            id,
-            `CLIENT WANT TO PARTY ${replyCallBack.text}`
-          );
+          await sendMessage(id, `CLIENT WANT TO PARTY ${replyCallBack.text}`);
         }
       );
     });
@@ -223,7 +209,7 @@ module.exports = {
       const chatId = msg.chat.id;
       logger.info(`[${chatId}] Accept ${partyPayCashHandlerPattern} message`);
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.partyCashText,
         formOf([buttons.partyCardRu, buttons.partyCardTr], [buttons.classes])
@@ -236,7 +222,7 @@ module.exports = {
       const chatId = msg.chat.id;
       logger.info(`[${chatId}] Accept ${partyPayCardTrHandlerPattern} message`);
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.partyCardTrText,
         formOf([buttons.partyCardRu, buttons.partyPayCash], [buttons.classes])
@@ -249,12 +235,20 @@ module.exports = {
       const chatId = msg.chat.id;
       logger.info(`[${chatId}] Accept ${partyPayCardRuHandlerPattern} message`);
 
-      await bot.sendMessage(
+      await sendMessage(
         chatId,
         messages.partyCardRuText,
         formOf([buttons.partyCardTr, buttons.partyPayCash], [buttons.classes])
       );
     });
+
+    const sendMessage = async (chatId, message, form) => {
+      try {
+        return await bot.sendMessage(chatId, message, form);
+      } catch (e) {
+        logger.error(`[${chatId}] Error while sending a message: ${e}`);
+      }
+    };
 
     const formOf = (...buttons) => {
       if (buttons[0] instanceof Array) {
